@@ -1,0 +1,96 @@
+
+DROP TABLE IF EXISTS groupchat_users;
+DROP TABLE IF EXISTS groupchat;
+DROP TABLE IF EXISTS messages_groupchat;
+DROP TABLE IF EXISTS messages_user;
+DROP TABLE IF EXISTS users;
+
+
+
+--=================================================================================================
+CREATE TABLE users (
+    userID varchar(20),
+    username varchar(20),
+    phone_number varchar(20),
+    CONSTRAINT users_PK PRIMARY KEY (userID)
+);
+
+
+INSERT INTO users VALUES('3913','John Smith','0432940038');
+INSERT INTO users VALUES('3914','John Bob','0431940538');
+INSERT INTO users VALUES('3915','Coco Smith','0433940098');
+INSERT INTO users VALUES('3910','Ratata Meow','0431943018');
+INSERT INTO users VALUES('3916','Abraham Lincoln','0491943011');
+
+
+CREATE TABLE groupchat (
+    groupchatID varchar(20),
+    groupchat_name varchar(20),
+    adminID varchar(20),
+    CONSTRAINT groupchat_PK PRIMARY KEY (groupchatID),
+    CONSTRAINT groupchat_FK_admin FOREIGN KEY (adminID) REFERENCES users(userID)
+);
+
+INSERT INTO groupchat VALUES('22449','The Cocos',3913);
+INSERT INTO groupchat VALUES('42951','YeahTheBoys',3915);
+INSERT INTO groupchat VALUES('24921','UTS!',3913);
+INSERT INTO groupchat VALUES('22241','Lads',3916);
+INSERT INTO groupchat VALUES('22495','Squirrels',3914);
+
+
+CREATE TABLE groupchat_users (
+    groupchatID varchar(20),
+    userID varchar(20),
+    CONSTRAINT groupchat_users_PK PRIMARY KEY (groupchatID, userID),
+    CONSTRAINT groupchat_users_FK_groupchat FOREIGN KEY (groupchatID) REFERENCES groupchat(groupchatID),
+    CONSTRAINT groupchat_users_FK_user FOREIGN KEY (userID) REFERENCES users(userID)
+);
+
+
+INSERT INTO groupchat_users VALUES('22449', '3913');
+INSERT INTO groupchat_users VALUES('22449', '3915');
+INSERT INTO groupchat_users VALUES('42951', '3914');
+INSERT INTO groupchat_users VALUES('42951', '3916');
+INSERT INTO groupchat_users VALUES('24921', '3914');
+
+CREATE TABLE messages_groupchat (
+    messagegcID varchar(20),
+    senderID varchar(20),
+    groupchatID varchar(20),
+    message_text text,
+    mp4_file varchar(255),
+    photo_file varchar(255),
+    message_timestamp TIMESTAMP,
+
+
+    CONSTRAINT messages_groupchat_PK PRIMARY KEY (messagegcID),
+    CONSTRAINT messages_groupchat_FK_sender FOREIGN KEY (senderID) REFERENCES users(userID),
+    CONSTRAINT messages_groupchat_FK_groupchat FOREIGN KEY (groupchatID) REFERENCES groupchat(groupchatID)
+);
+
+INSERT INTO messages_groupchat VALUES('10304', '3914',22449, 'Hey there, how are you?',NULL,NULL,TIMESTAMP '2024-03-10 23:28:57');
+INSERT INTO messages_groupchat VALUES('13040', '3915','22449', 'Hey guys, whats up?',NULL,NULL,TIMESTAMP '2024-01-04 09:55:57');
+INSERT INTO messages_groupchat VALUES('10000', '3913','22495', 'Hey John!',NULL,NULL,TIMESTAMP '2024-03-19 01:38:47');
+INSERT INTO messages_groupchat VALUES('19430', '3910','42951', 'Did you see the latest news?','news.mp4',NULL,TIMESTAMP '2024-03-23 12:44:17');
+INSERT INTO messages_groupchat VALUES('19403', '3916','24921', 'Did you see the latest cocos?',NULL,'coco.JPEG',TIMESTAMP '2024-04-19 19:38:57');
+
+CREATE TABLE messages_user (
+    messageID varchar(20),
+    senderID varchar(20),
+    recipientID varchar(20),
+    message_text text,
+    mp4_file varchar(255),
+    photo_file varchar(255),
+    message_timestamp TIMESTAMP,
+
+    CONSTRAINT messages_user_PK PRIMARY KEY (messageID),
+    CONSTRAINT messages_user_FK_sender FOREIGN KEY (senderID) REFERENCES users(userID),
+    CONSTRAINT messages_user_FK_recipient FOREIGN KEY (recipientID) REFERENCES users(userID)
+);
+
+
+INSERT INTO messages_user VALUES('103043', '3914',3915, 'look at this meme cuh!', NULL, NULL,TIMESTAMP '2024-03-19 12:38:57');
+INSERT INTO messages_user VALUES('130424', '3915','3913', 'wanna go gym?', NULL, NULL,TIMESTAMP '2024-04-16 12:40:55');
+INSERT INTO messages_user VALUES('100004', '3913','3915', 'Look at this meme!', 'funny.mp4', NULL,TIMESTAMP '2024-04-19 05:44:36');
+INSERT INTO messages_user VALUES('194302', '3910','3914', 'hi how are u', NULL, NULL,TIMESTAMP '2024-04-19 02:20:45');
+INSERT INTO messages_user VALUES('194013', '3916','3910', 'wanna go out to eat to this restuarant?', NULL, 'restaurant.JPEG',TIMESTAMP '2024-04-01 10:00:59');
